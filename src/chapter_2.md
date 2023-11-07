@@ -171,5 +171,3 @@ REMOVE USER ROOT AND ITS PRIVILEGES FROM ALKAMAI INSTANCE
 ---
 
 50. You may check for some ports being listened to by your Akamai instance to make sure that only safe and permitted services are running on the Akamai instance. The accepted services may look similar to the following; '127.0.0.53%lo:domain', '127.0.0.1:38551', '127.0.0.53lo:domain', '0.0.0.0:ssh', '45.33.13.203:ssh', and '[::]:ssh'.
-
-TO BE CONTINUED AT 'Dsq Step 2'!!!
