@@ -1,0 +1,276 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Pull code repo into Akamai - Akamai Live Deployment Steps</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Akamai Acct & Instance Creation</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> SSH remote access to Akamain & Akamai Config</a></li><li class="chapter-item expanded "><a href="chapter_3.html" class="active"><strong aria-hidden="true">3.</strong> Pull code repo into Akamai</a></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Nginx, Firewalls, LetsEncrypt</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Production deployment automation</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Akamai Live Deployment Steps</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <p>PULL REMOTE CODE REPO TO AKAMAI::</p>
+<hr />
+<ol>
+<li>
+<p>Before proceeding with this guide, now is a good time to change/add new 'AUTHORITATIVE NAMESERVER's to the domain name registrar of your choice, e.g - Porkbun. The new values of your 'AUTHORITATIVE NAMESERVER' should change to; 'ns1.linode.com', 'ns2.linode.com', 'ns3.linode.com', 'ns4.linode.com', 'ns5.linode.com'.</p>
+</li>
+<li>
+<p>Confirm that you have deployed your source code to GitHub. Provided that you followed this guide from its starting point, you have already done so at this point. Hence, the remainder of this guide assumes that you already have a GitHub repo set-up for your source code.</p>
+</li>
+<li>
+<p>Configure GitHub username and password for your WSL terminal. Enter commands <code>$ git config --global user.name &quot;&lt;your-name&gt;&quot;</code> AND <code>git config --global user.email &lt;your-dev-email-here&gt;</code>.</p>
+<ul>
+<li>For details check - https://www.git-scm.com/book/en/v2/Customizing-Git-Git-Configuration</li>
+</ul>
+</li>
+<li>
+<p>Create a new ssh-key pair (public &amp; private key-pair) with command;</p>
+<pre><code class="language-sh"> ssh-keygen -t ed25519 -C &quot;&lt;your-email-address-here&gt;&quot;
+</code></pre>
+<p>Preferably change the name and target location to store the SSH keypair, for-example - <code>/home/&lt;your-akamai-instance-user-e.g-lance&gt;/.ssh/&lt;ssh-key-pair-custom-name&gt;</code>. Let your ssh-keypair name be something like
+<code>access_to_dsq_workspace</code>. Optionally use a passphrase, which you can save in the keychain.</p>
+</li>
+<li>
+<p>Activate your ssh-agent so you can make it know about the ssh-key that you have just created using command;</p>
+<pre><code class="language-sh"> eval &quot;$(ssh-agent -s)&quot;
+</code></pre>
+<p>You should see something similar to the following;
+<code>Agent pid &lt;an-id&gt;</code></p>
+</li>
+<li>
+<p>Add your just created private key pair to the ssh-agent to actually let the activated ssh-agent know about the just created ssh-key. Use command;</p>
+<pre><code class="language-sh"> ~/.ssh/config
+</code></pre>
+<p>...to attempt to open a config file, but in case that the config file does not exist, simply create a new config one by entering command;</p>
+<pre><code class="language-sh">sudo nano ~/.ssh/config
+</code></pre>
+</li>
+<li>
+<p>Add the following information to the just-created config file:</p>
+<pre><code>Host *
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/access_to_axum_workspace
+  UseKeychain yes
+</code></pre>
+</li>
+<li>
+<p>Enter 'Ctrl + O', then press the 'Enter' key to save the edited config file, and then enter 'Ctrl + X' to exit out of the nano editor</p>
+</li>
+<li>
+<p>Run an ssh-add command to add the private ssh-key key pair which you have just created:</p>
+<pre><code>ssh-add ~/.ssh/&lt;the-name-of-your-private-ssh-key-pair-e.g-id_ed25519&gt;
+</code></pre>
+<p>The above command should out something similar to this -</p>
+<pre><code>Identity added: /&lt;the-location-of-the-added-ssh-key-pair&gt; (&lt;the-email-attached-to-the-added-ssh-key-pair&gt;)
+</code></pre>
+</li>
+<li>
+<p>Now copy the public ssh keypair using the cat command</p>
+<pre><code>$ cat ~/.ssh/&lt;the-name-of-your-public-ssh-key-pair-e.g-access_to_axum_workspace.pub&gt;
+</code></pre>
+</li>
+<li>
+<p>Begin the process of adding a new public ssh-key pair to GitHub.</p>
+<ul>
+<li>Go to your repo on GitHub. Click the green 'Code&lt;&gt;' button and then click the 'SSH' tab from the pop-up, and then click on the link-text that suggests creating a new public key. At the moment of this writing, the link has text 'add a new public key' ( https://github.com/settings/ssh/new ).</li>
+<li>Paste the pub SSH keypair that you just generated earlier, and provide a title value that (preferably) matches the name given to the generated SSH pub-keypair without its '.pub' suffix of course, then choose the 'authentication' option and then click save SSH key. You may be asked to re-login to GitHub if this is the first ssh key you're adding to your GitHub account.</li>
+</ul>
+</li>
+<li>
+<p>Run command <code>ssh -T git@github.com</code> to set your ssh key(s) to target GitHub</p>
+</li>
+<li>
+<p>Enter <code>yes</code> if prompted for a confirmation.</p>
+</li>
+<li>
+<p>Clone your GitHub repo (via SSH):</p>
+<ul>
+<li>Again, go back to your source-control (GitHub) repo, click on the green 'Code&lt;&gt;' button, click the 'SSH' tab from the pop-up, and this time copy the displayed SSH link to the repo. The link looks similar to this: <code>git@github.com:&lt;your-github-user-name&gt;/&lt;your-repo's-name&gt;.git</code></li>
+<li>Navigate into your Akamai instance target/favorite directory to hold your code-repo, in this case 'dsq-1-app' if you haven't already done so, and then enter command <code>git clone &lt;ssh-link-to-your-GitHub-source-control-repo-e.g-dsq-workspace&gt;</code></li>
+<li>Provide the passphrase for the SSH keypair if asked.</li>
+</ul>
+</li>
+</ol>
+<hr />
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="chapter_2.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                            <a rel="next" href="chapter_4.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="chapter_2.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a rel="next" href="chapter_4.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

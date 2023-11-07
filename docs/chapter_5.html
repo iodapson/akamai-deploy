@@ -1,0 +1,336 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Production deployment automation - Akamai Live Deployment Steps</title>
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Akamai Acct & Instance Creation</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> SSH remote access to Akamain & Akamai Config</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Pull code repo into Akamai</a></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Nginx, Firewalls, LetsEncrypt</a></li><li class="chapter-item expanded "><a href="chapter_5.html" class="active"><strong aria-hidden="true">5.</strong> Production deployment automation</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Akamai Live Deployment Steps</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <p>AUTOMATING CODE DEPLOYMENTS TO PRODUCTION ON AKAMAI</p>
+<ol>
+<li>
+<p>This guide would run your app's code as Docker containers in production mode, therefore, make sure to have a decent 'Dockerfile; and 'docker-compose.yml' file for your app's code in order to run your app as Docker containers. If you followed the axum template / axum-leptos template / axum-yew template creation steps, then you've already fulfilled this requirement.</p>
+</li>
+<li>
+<p>Optionally create a DockerHub account to host your application docker images inside DockerHub. This guide does not utilize DockerHub.</p>
+</li>
+</ol>
+<ul>
+<li>In case you do decide to utilize DockerHub, you can get a GitHub Actions workflow to publish a new docker image to DockerHub each time you push new code changes to GitHub.</li>
+<li>You can get the GitHub workflow file doing this here: https://docs.github.com/en/actions/publishing-packages/publishing-docker-images</li>
+<li>Make neccessary changes like setting a new docker image name with your DockerHub account. You can find this on line 31 or so ('with.images: <specify-your-dockerhub-account-repo-name>/<specify-your-docker-image-name>').</li>
+<li>Configure your GitHub account to contain your DockerHub account username and password as GitHub secrets. Ideally name the secrets as 'DOCKER_USERNAME' and 'DOCKER_PASSWORD'.</li>
+</ul>
+<p>Preferably start here:</p>
+<ol start="3">
+<li>Log-in to your Akamai instance and create a new script to stop currently running container -&gt; create new docker images - and run them as containers.</li>
+</ol>
+<ul>
+<li>First cd into your project's workspace, which in this case is '~/{{your-custom-workspace-name}}' (<strong>confirm this</strong>), then create a new '.sh' file named 'docker-maintenance.sh' inside it by running command <code>nano docker-maintenance.sh</code> This file should be created right inside the code repo directory for your project inside your Akamai instance.</li>
+<li>Next up, edit the opened script with the following contents:
+<pre><code class="language-sh"># Remove the currently running image
+sudo docker-compose down
+# Note: In case you used `docker run ...` command to manually spin up your previous docker container, then use `docker stop &lt;container-name&gt;` instead of 'docker-compose down'.
+# Remove the current Docker image inside your system
+sudo docker rmi &lt;your-app-docker-image&gt;
+# Optionally remove the existing volume
+sudo docker rm volume &lt;your-app-docker-db-data&gt;
+# ? Maybe pull code changes too from GitHub. !todo(later)
+# Build new Docker image
+sudo docker build -t &lt;your-app-docker-image&gt;:&lt;tag-number-goes-here-e.g-1.0&gt;
+# Note: In case you make use of a remote docker repo, first pull the docker image from dockerhub using command `docker pull &lt;the-docker-hub-repo-name&gt;/&lt;the-docker-hub-image-name&gt;`
+# ...then run a new docker container out of it using command `docker-compose up -d` OR `docker run -t -d -p 80:8070 --name &lt;the-docker-hub-repo-name&gt;:&lt;the-tag-name&gt;` if for some reason are not using a 'docker-compose.yml' file.
+sudo docker-compose up -d
+</code></pre>
+</li>
+<li>Save the shell script using command 'Ctrl' + 'O', and then exit out of the nano editor using command 'Ctrl' + 'X'.</li>
+</ul>
+<ol start="4">
+<li>
+<p>Permit the shell-script 'workspace-docker-maintenance.sh' to be executed on your machine using command:</p>
+<pre><code>sudo chmod +x workspace-docker-maintenance.sh
+</code></pre>
+</li>
+<li>
+<p>Test-run the script inside your Akamai instance using command;</p>
+</li>
+</ol>
+<pre><code>bash workspace-docker-maintenance.sh
+</code></pre>
+<p><small>The above script's execution essentially stops your Docker containers, and deletes the image and volumes associated with it.</small></p>
+<ol start="6">
+<li>
+<p>Still inside your Akamai instance, make sure to rerun <code>$ docker-compose up -d</code> from inside the root level of the directory containing your app's code bring your code live once again.</p>
+</li>
+<li>
+<p>Create a new Git branch name 'production' directly from your GitHub remote repo. You don't need anything (like a 'README.md') included with it.</p>
+</li>
+<li>
+<p>Go back to your Akamai instance; inside the root-level of your application's code (workspace directory), apply Git commands - <code>$ git pull</code>, <code>$ git checkout production</code>.</p>
+</li>
+<li>
+<p>Open a terminal your local dev machine, navigate to the root-level directory of your app's codebase, and type Git commands - <code>$ git pull</code>, <code>$ git checkout production</code>.</p>
+</li>
+<li>
+<p>Now you need to create a GitHub Actions workflow for Git branch 'production' to allow a remote SSH connection to your Akamai instance, and run a script to update your server running on your Akamai instance anytime that you make code changes made to Git branch 'production' from inside your local dev machine:</p>
+</li>
+</ol>
+<ul>
+<li>Note, we'll use the 'ssh-action' from Github repo - https://github.com/appleboy/ssh-action</li>
+<li>Rename the existing '.github/workflows/rust.yml' file inside your local dev machine to 'ci-cd.yml', and then change its content to;</li>
+</ul>
+<pre><code class="language-yaml"># Inside 'ci-cd.yml'
+name: Check code &amp; Publish code-changes to Akamai production via remote SSH
+
+on:
+  push:
+    branches: ['production']
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --verbose
+      - name: Run tests
+        run: cargo test --verbose
+
+  ssh_into_akamai_production_instance:
+    name: Building code inside Akamai
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: executing remote ssh commands to Akamai to run Docker-maintainance
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: bash workspace-docker-maintenance.sh
+</code></pre>
+<ol start="10">
+<li>
+<p>Create the necessary GitHub secrets credentials used in the new 'ci-cd.yml' GitHub Actions workflow- 'HOST' (will be your Akamai instance public IPV4 address or connected domain name), 'USERNAME' (will be the local user you created on your Akamai instance), 'PASSWORD' (your Akamai instance local user' password). Provide the value of '22' as your 'PORT', which is the default used in servers.</p>
+</li>
+<li>
+<p>If you haven't already done so, add your '.git' and 'target' to '.dockerignore'. Apply this change to branch 'production'.</p>
+</li>
+<li>
+<p>Make sure to commit the changes you made on your branch 'production' on your local dev machine, and then push the changes to your remote repo. You'll encounter the error: Job &quot;Building code inside Akamai&quot; fail with the following repeated error log - &quot;err: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper&quot;. Fix this error in the next step.</p>
+</li>
+<li>
+<p>Edit and change the first line of the 'workspace-docker-maintenance.sh' bash script from <code>sudo docker-compose down</code> to <code>echo '&lt;your-akamai-instance-user-password&gt;' | sudo -S docker-compose down</code>. Effecting this change would make your 'workspace-docker--maintenance.sh' file look similar to the following;</p>
+</li>
+</ol>
+<pre><code class="language-sh">
+  # Remove the currently running image
+  echo '&lt;your-akamai-instance-user-password&gt;' | sudo -S docker-compose down
+  # Note: In case you used `docker run ...` command to manually spin up your previous docker container, then use `docker stop &lt;container-name&gt;` instead of 'docker-compose down'.
+  # Remove the current Docker image inside your system
+  sudo docker rmi &lt;your-app-docker-image&gt;
+  # Optionally remove the existing volume
+  sudo docker rm volume &lt;your-app-docker-db-data&gt;
+  # Now let's pull code changes from GitHub
+  git pull
+  # Build new Docker image
+  sudo docker build -t &lt;your-app-docker-image&gt;:&lt;tag-number-goes-here-e.g-1.0&gt;
+  # Note: In case you make use of a remote docker repo, first pull the docker image from dockerhub using command `docker pull &lt;the-docker-hub-repo-name&gt;/&lt;the-docker-hub-image-name&gt;`
+  # ...then run a new docker container out of it using command `docker-compose up -d` OR `docker run -t -d -p 80:8070 --name &lt;the-docker-hub-repo-name&gt;:&lt;the-tag-name&gt;` if for some reason are not using a 'docker-compose.yml' file.
+  sudo docker-compose up -d
+</code></pre>
+<ol start="14">
+<li>You need to edit your previously created '~/.ssh/config' (SSH configuration file) to allow the script inside your Akamai instance to make an SSH connection to your remote repo without typing the passphrase associated with your SSH keys. If you don't make this change, then you would have to manually enter command to pull code changes inside Git branch 'production' from your remote repo, and then manaually enter the command to execute your `workspace-docker-maintenance.sh' script file to deploy the changes on your Akamai instance.</li>
+</ol>
+<pre><code>Host *
+  IgnoreUnknown Usekeychain,AddKeysToAgent
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/access_to_axum_workspace
+  UseKeychain yes
+</code></pre>
+<p>Congratulations. You now have a set-up that works for serving a website / web-app to production using Akamai Cloud. You can now merge code changes to local Git branch 'production' then the changes remote Git branch 'production', and have it automatically deployed live on your Akamai instance.</p>
+<p>Let's go back to our Rust application code, and add features we can run on 'production' simply by pushing the changes to Git branch 'production' on your remote repo.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="chapter_4.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="chapter_4.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+    </body>
+</html>

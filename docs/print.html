@@ -1,0 +1,776 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js light">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Akamai Live Deployment Steps</title>
+        <meta name="robots" content="noindex" />
+        <!-- Custom HTML head -->
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+    </head>
+    <body>
+        <!-- Provide site root to javascript -->
+        <script type="text/javascript">
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('no-js')
+            html.classList.remove('light')
+            html.classList.add(theme);
+            html.classList.add('js');
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="chapter_1.html"><strong aria-hidden="true">1.</strong> Akamai Acct & Instance Creation</a></li><li class="chapter-item expanded "><a href="chapter_2.html"><strong aria-hidden="true">2.</strong> SSH remote access to Akamain & Akamai Config</a></li><li class="chapter-item expanded "><a href="chapter_3.html"><strong aria-hidden="true">3.</strong> Pull code repo into Akamai</a></li><li class="chapter-item expanded "><a href="chapter_4.html"><strong aria-hidden="true">4.</strong> Nginx, Firewalls, LetsEncrypt</a></li><li class="chapter-item expanded "><a href="chapter_5.html"><strong aria-hidden="true">5.</strong> Production deployment automation</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky bordered">
+                    <div class="left-buttons">
+                        <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </button>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light (default)</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Akamai Live Deployment Steps</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <ol>
+<li>
+<p>First, go to the web-address below to create a new Akamai account, and instance:
+https://cloud.linode.com/linodes</p>
+</li>
+<li>
+<p>Click the 'Linodes' section.</p>
+</li>
+<li>
+<p>Click 'Add a Linode' to add a new Linode server</p>
+</li>
+<li>
+<p>Make sure you are on the 'Distributions' server.</p>
+</li>
+<li>
+<p>You might wanna change your distribution to an 'Ubuntu LTS' or more preferably, Docker since this guide would walk you through deploying a containerized application.</p>
+</li>
+<li>
+<p>Select a region. You might wanna choose San Francisco so you have access to more services.</p>
+</li>
+<li>
+<p>Choose your instance. I recommend 'Nanode' (the most gentle one for your pocket).</p>
+</li>
+<li>
+<p>Give your instance a name and password. No need for backup. And wait for a few minutes.</p>
+</li>
+<li>
+<p>Click 'Launch LISH console'. Make sure that you are on 'Weblish'</p>
+</li>
+<li>
+<p>Inside the LISH console, type <code>root</code> as the username value, then enter, then type in your root-password value, then enter. You should now see something like this - 'root@localhost:-#'.</p>
+</li>
+</ol>
+<p>Note: The best and recommended way to connect to your Linode is via SSH.</p>
+<p>Note: You can add new ip-addresses to your Akamai web server instance.</p>
+<ul>
+<li>To add an ip-address to your Linode server instance, click on your server instance name, then the 'Network' tab, scroll down then select 'ipv4' (private or public). Then click 'Allocate'.</li>
+<li>Now is also a good time to purchase yourself a domain name from domain registrars such as 'Namecheap', and 'Porkbun'.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><p>SSH ACCESS TO AKAMAI &amp; AKAMAI CONFIGURATION</p>
+<hr />
+<p>ACCESSING YOUR AKAMAI INSTANCE VIA SSH</p>
+<ol>
+<li>
+<p>Preferably download and install and open the Linux Ubuntu WSL if you're on Windows. This guide assumes that you have the Linux Ubuntu WSL version 22.04 installed.</p>
+</li>
+<li>
+<p>SSH into your Akamai instance using the shell command:</p>
+</li>
+</ol>
+<pre><code class="language-sh">ssh root@&lt;your-akamai-instance-pub-ipv4-address&gt;
+</code></pre>
+<ol start="3">
+<li>
+<p>Type 'yes' if asked to confirm SSL connection and pressed 'Enter'.</p>
+</li>
+<li>
+<p>Type in your Akamai instance' root password and press 'Enter'.</p>
+</li>
+<li>
+<p>Check if Docker is running by entering command <code>$ docker ps</code>. If this command is unrecognized, it means your Akamai instance does not have the Docker engine in it, and you will have to do a little more research on how to do so, and then come back to the remainder of this guide.</p>
+</li>
+</ol>
+<hr />
+<p>ALIASING THE HOSTNAME OF YOUR AKAMAI INSTANCE FROM ITS PUBLIC IPV4 ADDRESS TO A NEW, AND MEMORABLE DESIRED NAME (E.G, 'my-first-akamai-instance')</p>
+<ol start="6">
+<li>First ensure that your Akamai instance is up to date by entering the command:</li>
+</ol>
+<pre><code class="language-sh">apt update
+</code></pre>
+<p>then</p>
+<pre><code class="language-sh">apt dist-upgrade
+</code></pre>
+<ol start="7">
+<li>
+<p>Now get ready to alias the hostname of your Akamai instance from its assigned IPv4 address number-digits to a memorable name, for example 'my-first-akamai-instance'.</p>
+</li>
+<li>
+<p>The first step to take to change the hostname is by entering command:</p>
+</li>
+</ol>
+<pre><code>hostnamectl set-hostname my-first-akamai-instance
+</code></pre>
+<ol start="9">
+<li>
+<p>Enter command <code>$ hostname</code> to output the current hostname and confirm that the hostname indeed got changed to 'my-first-akamai-instance'.</p>
+</li>
+<li>
+<p>Open the host in order to update the host file with the new hostname just created by entering command:</p>
+</li>
+</ol>
+<pre><code>nano etc/hosts
+</code></pre>
+<hr />
+<ol start="11">
+<li>
+<p>Edit the host file. Under '127.0.0.1 localhost'. First input a newline, then paste/type '<your-akamai-instance-pub-IPv4 address> my-first-akamai-instance'. Note that for this example, the new hostname is 'my-first-akamai-instance'. Then add a newline again, and paste/type '<your-akamai-instance-pub-IPv6-address> <the-new-hostname>'</p>
+</li>
+<li>
+<p>Save the changes made to the host file by pressing 'Ctrl' + 'O'.</p>
+</li>
+<li>
+<p>Confirm the changes by pressing the 'Enter' key.</p>
+</li>
+<li>
+<p>Exit out of the nano editor by pressing 'Ctrl' + 'X'.</p>
+</li>
+</ol>
+<hr />
+<p>SETTING YOUR AKAMAI INSTANCE TIMEZONE</p>
+<ol start="15">
+<li>
+<p>Begin setting up a new timezone for your Akamai instance by first entering command <code>$ timedatectl list-timezones</code> to list timezones and find a timezone that match your current timezone.</p>
+</li>
+<li>
+<p>Took note of the name of the desired matching timzone's name, and then press 'q' and the 'Enter' key to exit out of the list.</p>
+</li>
+<li>
+<p>Apply the desired timezone, e.g, 'Africa/Lagos' by entering command:</p>
+</li>
+</ol>
+<pre><code>timedatectl set-timezone Africa/Lagos
+</code></pre>
+<ol start="18">
+<li>
+<p>Confirm that the the timezone was successfully changed by entering command <code>$ date</code>. In the case of timezone 'Africa/Lagos' for example, it should output a date that is the current UTC+1 datetime.</p>
+</li>
+<li>
+<p>Reboot your Akamai instance from Akamai account' dashboard in order to make the change permanently take effect. Note that you can change the timezone again at anytime you wish.</p>
+</li>
+<li>
+<p>Enter command <code>$ exit</code> to close the SSH connection to the Akamai instance. Why not take a break if you haven't already :)</p>
+</li>
+</ol>
+<hr />
+<p>AUTOMATING SYSTEM-WIDE UPGRADES IN YOUR AKAMAI INSTANCE, CREATING A NEW CUSTOM USER AND PASSWORD TO ACCESS YOUR AKAMAI INSTANCE, &amp; GRANTING THE NEWLY ADDED CUSTOM USER ACCESS TO EXECUTE COMMANDS VIA SUDO USERGROUP</p>
+<ol start="21">
+<li>
+<p>Begin the process to secure your Akamai instance by safeguarding access to it by first running command <code>$ apt update &amp;&amp; apt dist-upgrade</code>.</p>
+</li>
+<li>
+<p>Enter command <code>$ apt install unattended-upgrades</code> to install a package called 'unattended-upgrades' that would automatically install updates to your akamai/linode instance. Depending on your your Akamai instance' base-system (hopefully Ubuntu 22.04), you would find that this package has been already being pre-installed in your Akamai instance.</p>
+</li>
+<li>
+<p>Enter the following command <code>$ useradd -m -s /bin/bash &lt;your-akamai-instance-custom-user's-name&gt; &amp;&amp; passwd &lt;your-akamai-instance-custom-user's-name&gt;</code> to create a new custom user for your Akamai instance besides user 'root'.</p>
+</li>
+<li>
+<p>Enter a password value for the new custom user. Keep note of this password safely somewhere.</p>
+</li>
+<li>
+<p>Confirm that a new user was indeed added to your Akamai instance by entering command <code>$ ls /home</code>. The newly created custom user should be listed as a directory.</p>
+</li>
+</ol>
+<hr />
+<ol start="26">
+<li>
+<p>Also confirm that the new user '&lt;your-akamai-instance-custom-user's-name&gt;' had its password set by entering command <code>$ cat /etc/passwd</code>. It should print out something similar to this: '&lt;your-akamai-instance-custom-user's-name:x:1000:1000::/home/[new-user-name]:/bin/sh' at the bottom part of the output.</p>
+</li>
+<li>
+<p>Enter command <code>$ which sudo</code> to confirm that your Akamai instance has 'sudo' installed on it. It should output the directory of its sudo installation which is in '/usr/bin/sudo'.</p>
+</li>
+<li>
+<p>Enter command <code>$ visudo</code> and press down the down arrow-key until you see '%admin ALL=(ALL) ALL', and '%sudo ALL=(ALL:ALL) ALL'. Seeing groups ('%admin', and '%sudo') confirms that these groups (sudo, and admin) have previledges to execute any command across all of your Akamai instance system.</p>
+</li>
+<li>
+<p>Press 'Ctrl' + 'X' to exit out of the 'visudo' file opened with the Nano editor.</p>
+</li>
+<li>
+<p>Enter the command <code>$ usermod -aG sudo &lt;your-akamai-instance-custom-user's-name&gt;</code> to add the custom user's name to group 'sudo' which can execute any command across your Akamai instance.</p>
+</li>
+</ol>
+<hr />
+<ol start="31">
+<li>
+<p>Enter command <code>$ groups &lt;your-akamai-instance-custom-user's-name&gt;</code> to output the groups that '&lt;your-akamai-instance-custom-user's-name&gt;' belongs to, and confirm that 'sudo' is indeed one of them.</p>
+</li>
+<li>
+<p>Enter command <code>$ su - &lt;your-akamai-instance-custom-user's-name&gt;</code> to switch from the current default user 'root' to '&lt;your-akamai-instance-custom-user's-name&gt;. It should successfully switch to the new user '&lt;your-akamai-instance-custom-user's-name&gt;' on the terminal as '&lt;your-akamai-custom-user's-name&gt;@my-first-akamai-instance'.</p>
+</li>
+</ol>
+<p>Please Note: Switching to the new user' &lt;your-akamai-instance-custom-user's-name&gt;' means that you'll need to precede every command you make inside your Akamai instance with a 'sudo', especially if such command requires wirte access to something inside your Akamai instance.</p>
+<hr />
+<p>OPTIONAL: SSH ACCESS TO YOUR AKAMAI INSTANCE FROM THE WSL TERMINAL ON LOCAL DEV MACHINE</p>
+<ol start="33">
+<li>
+<p>First exit out of your Akamai instance which should bring you back to your WSL terminal interface once again. Then enter command <code>$ ssh-keygen -t ed25519 -C &lt;your-dev-email-address&gt;</code> to generate a new SSH keypair to automate SSH connections to your Akamai instance right from inside your locally installed WSL.</p>
+</li>
+<li>
+<p>Confirm the location inside your WSL to store the generated SSH keypair, it should be similar to this - '/home/&lt;your-local-wsl-user's-name&gt;/.ssh/<your-chosen-akamai-ssh-access-keypair-name>'.</p>
+</li>
+<li>
+<p>Optionally provide a passphrase for the generated ssh key pair.</p>
+</li>
+</ol>
+<hr />
+<ol start="36">
+<li>
+<p>Enter command <code>$ ls -l ~/.ssh</code> to confirm the existence of the generated ssh-key pair. This command should print out keypairs by their name '<your-chosen-akamai-ssh-access-keypair-name>' and '<your-chosen-akamai-ssh-keypair-name>.pub' as output.</p>
+</li>
+<li>
+<p>Enter the command to copy over the public key of the generated ssh keypair over to your Akamai instance under/for user &lt;your-akamai-instance-custom-user's-name&gt; inside your Akamai instance.</p>
+</li>
+</ol>
+<pre><code>$ ssh-copy-id -i ~/.ssh/&lt;chosen-ssh-keypair-name&gt;.pub &lt;your-akamai-instance-custom-user's-name&gt;@&lt;your-akamai-instance-pub-ipv4-address&gt;
+</code></pre>
+<ol start="38">
+<li>
+<p>Enter 'yes' to confirm the ssh connection to your Akamai instance.</p>
+</li>
+<li>
+<p>Enter the password of/for '&lt;your-akamai-instance-custom-user's-name&gt;' on your Akamai instance in order to gain access to the instance.</p>
+</li>
+<li>
+<p>Now you can SSH into your Akamai instance from the terminal or your local WSL installation. To do so now, first exit out of your Akamai instance and re-login using SSH command:</p>
+</li>
+</ol>
+<pre><code>$ ssh &lt;your-akamai-instance-custom-user's-name&gt;@&lt;your-akamai-pub-ipv4-address&gt;`
+</code></pre>
+<hr />
+<p>REMOVE USER ROOT AND ITS PRIVILEGES FROM ALKAMAI INSTANCE</p>
+<ol start="41">
+<li>
+<p>Log-in to your Akamai instance, e.g, 'your-first-akamai-instance' using the command <code>$ ssh &lt;your-akamai-instance-custom-user's-name&gt;@&lt;your-first-akamai-instance-pub-ipv4-address&gt;</code>, then provide the password for '&lt;your-custom-user's-name&gt;' OR SSH access passphrase, as the case may be.</p>
+</li>
+<li>
+<p>Run command <code>$ sudo apt update &amp;&amp; sudo apt dist-upgrade</code> to update the package registry list and perform an actual upgrade of all the packages inside the Akamai instance. Please note again that henceforth, a prefix of 'sudo' is needed for every command you'll make inside your Akamai instance.</p>
+</li>
+<li>
+<p>Provide the password for 'your-first-akamai-instance' Akamai instance.</p>
+</li>
+<li>
+<p>Begin the process of removing user 'root' access to the Akamai instance for security reasons by entering the command <code>$ sudo nano /etc/ssh/sshd_config</code> which opens up the ssh config file for editing.</p>
+</li>
+<li>
+<p>Press the down-arrow key multiple times until you reach option-value 'PermitRootLogin yes', and changed it to 'PermitRootLogin no'.</p>
+</li>
+</ol>
+<hr />
+<ol start="46">
+<li>
+<p>Enter a newline (just for aethestics), and provide a new option-value after comment line '#MaxSessions 10' with the value - 'AllowUsers &lt;your-akamai-instance-custom-user's-name&gt;'. Note that you could add more users other than '&lt;your-akamai-intance-custom-user's-name&gt;', you just need to separate each custom user's name with a space.</p>
+</li>
+<li>
+<p>Press 'Ctrl' + 'O' to save the file, then press 'Enter' to confirm the default name to save the file as, then press 'Ctrl' + 'X' to exit out of Nano.</p>
+</li>
+<li>
+<p>Enter command <code>$ sudo systemctl restart sshd</code> to restart the ssh daemon service which wouldn't break user '&lt;your-akamai-instance-custom-user's-name&gt;' SSH connection pipe to your Akamai instance while restarting. Note however that you will be asked to enter the password for user '&lt;your-akamai-instance-custom-user's-name&gt;'.</p>
+</li>
+<li>
+<p>Open a new Ubuntu 22.0.4 WSL terminal and SSH into '&lt;your-akamai-instance-custom-user's-name&gt;@<your-akamai-instance-name-alias-or-ipv4-address> just to make sure that the ssh connection still works. You should be logged in successfully which makes it safe to assume that user '&lt;your-akamai-instance-custom-user's-name&gt;' SSH connection access to the Akamai instance was broken.</p>
+</li>
+</ol>
+<hr />
+<ol start="50">
+<li>You may check for some ports being listened to by your Akamai instance to make sure that only safe and permitted services are running on the Akamai instance. The accepted services may look similar to the following; '127.0.0.53%lo:domain', '127.0.0.1:38551', '127.0.0.53lo:domain', '0.0.0.0:ssh', '45.33.13.203:ssh', and '[::]:ssh'.</li>
+</ol>
+<p>TO BE CONTINUED AT 'Dsq Step 2'!!!</p>
+<div style="break-before: page; page-break-before: always;"></div><p>PULL REMOTE CODE REPO TO AKAMAI::</p>
+<hr />
+<ol>
+<li>
+<p>Before proceeding with this guide, now is a good time to change/add new 'AUTHORITATIVE NAMESERVER's to the domain name registrar of your choice, e.g - Porkbun. The new values of your 'AUTHORITATIVE NAMESERVER' should change to; 'ns1.linode.com', 'ns2.linode.com', 'ns3.linode.com', 'ns4.linode.com', 'ns5.linode.com'.</p>
+</li>
+<li>
+<p>Confirm that you have deployed your source code to GitHub. Provided that you followed this guide from its starting point, you have already done so at this point. Hence, the remainder of this guide assumes that you already have a GitHub repo set-up for your source code.</p>
+</li>
+<li>
+<p>Configure GitHub username and password for your WSL terminal. Enter commands <code>$ git config --global user.name &quot;&lt;your-name&gt;&quot;</code> AND <code>git config --global user.email &lt;your-dev-email-here&gt;</code>.</p>
+<ul>
+<li>For details check - https://www.git-scm.com/book/en/v2/Customizing-Git-Git-Configuration</li>
+</ul>
+</li>
+<li>
+<p>Create a new ssh-key pair (public &amp; private key-pair) with command;</p>
+<pre><code class="language-sh"> ssh-keygen -t ed25519 -C &quot;&lt;your-email-address-here&gt;&quot;
+</code></pre>
+<p>Preferably change the name and target location to store the SSH keypair, for-example - <code>/home/&lt;your-akamai-instance-user-e.g-lance&gt;/.ssh/&lt;ssh-key-pair-custom-name&gt;</code>. Let your ssh-keypair name be something like
+<code>access_to_dsq_workspace</code>. Optionally use a passphrase, which you can save in the keychain.</p>
+</li>
+<li>
+<p>Activate your ssh-agent so you can make it know about the ssh-key that you have just created using command;</p>
+<pre><code class="language-sh"> eval &quot;$(ssh-agent -s)&quot;
+</code></pre>
+<p>You should see something similar to the following;
+<code>Agent pid &lt;an-id&gt;</code></p>
+</li>
+<li>
+<p>Add your just created private key pair to the ssh-agent to actually let the activated ssh-agent know about the just created ssh-key. Use command;</p>
+<pre><code class="language-sh"> ~/.ssh/config
+</code></pre>
+<p>...to attempt to open a config file, but in case that the config file does not exist, simply create a new config one by entering command;</p>
+<pre><code class="language-sh">sudo nano ~/.ssh/config
+</code></pre>
+</li>
+<li>
+<p>Add the following information to the just-created config file:</p>
+<pre><code>Host *
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/access_to_axum_workspace
+  UseKeychain yes
+</code></pre>
+</li>
+<li>
+<p>Enter 'Ctrl + O', then press the 'Enter' key to save the edited config file, and then enter 'Ctrl + X' to exit out of the nano editor</p>
+</li>
+<li>
+<p>Run an ssh-add command to add the private ssh-key key pair which you have just created:</p>
+<pre><code>ssh-add ~/.ssh/&lt;the-name-of-your-private-ssh-key-pair-e.g-id_ed25519&gt;
+</code></pre>
+<p>The above command should out something similar to this -</p>
+<pre><code>Identity added: /&lt;the-location-of-the-added-ssh-key-pair&gt; (&lt;the-email-attached-to-the-added-ssh-key-pair&gt;)
+</code></pre>
+</li>
+<li>
+<p>Now copy the public ssh keypair using the cat command</p>
+<pre><code>$ cat ~/.ssh/&lt;the-name-of-your-public-ssh-key-pair-e.g-access_to_axum_workspace.pub&gt;
+</code></pre>
+</li>
+<li>
+<p>Begin the process of adding a new public ssh-key pair to GitHub.</p>
+<ul>
+<li>Go to your repo on GitHub. Click the green 'Code&lt;&gt;' button and then click the 'SSH' tab from the pop-up, and then click on the link-text that suggests creating a new public key. At the moment of this writing, the link has text 'add a new public key' ( https://github.com/settings/ssh/new ).</li>
+<li>Paste the pub SSH keypair that you just generated earlier, and provide a title value that (preferably) matches the name given to the generated SSH pub-keypair without its '.pub' suffix of course, then choose the 'authentication' option and then click save SSH key. You may be asked to re-login to GitHub if this is the first ssh key you're adding to your GitHub account.</li>
+</ul>
+</li>
+<li>
+<p>Run command <code>ssh -T git@github.com</code> to set your ssh key(s) to target GitHub</p>
+</li>
+<li>
+<p>Enter <code>yes</code> if prompted for a confirmation.</p>
+</li>
+<li>
+<p>Clone your GitHub repo (via SSH):</p>
+<ul>
+<li>Again, go back to your source-control (GitHub) repo, click on the green 'Code&lt;&gt;' button, click the 'SSH' tab from the pop-up, and this time copy the displayed SSH link to the repo. The link looks similar to this: <code>git@github.com:&lt;your-github-user-name&gt;/&lt;your-repo's-name&gt;.git</code></li>
+<li>Navigate into your Akamai instance target/favorite directory to hold your code-repo, in this case 'dsq-1-app' if you haven't already done so, and then enter command <code>git clone &lt;ssh-link-to-your-GitHub-source-control-repo-e.g-dsq-workspace&gt;</code></li>
+<li>Provide the passphrase for the SSH keypair if asked.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<div style="break-before: page; page-break-before: always;"></div><p>NOTE:</p>
+<ul>
+<li>You can copy any file from your windows machine, using Git Bash for example, to your Akamai server, directly.
+To do this, enter the following scp command:
+<code>scp &lt;~/target-file&gt; root@&lt;your-akamai-instance-pub-ipv4-addr&gt;:~/&lt;target-dir&gt;</code></li>
+</ul>
+<ol>
+<li>CD into the directory containing your Nginx installation/container inside your Akamai server</li>
+</ol>
+<ul>
+<li>Enter command
+<code>cd /etc/nginx</code></li>
+</ul>
+<ol start="2">
+<li>CD to &quot;sites-available&quot;</li>
+</ol>
+<ul>
+<li>Enter command
+<code>cd sites-available</code></li>
+</ul>
+<ol start="3">
+<li>Open file &quot;default&quot; using nano</li>
+</ol>
+<ul>
+<li>Enter command
+<code>sudo nano default</code></li>
+</ul>
+<ol start="4">
+<li>Scroll down using the down-arrow key till you find parameter &quot;server_name&quot;</li>
+</ol>
+<ul>
+<li>Change propery-value &quot;server*name *&quot; to &quot;server_name <your-domain-name>;&quot;
+OR</li>
+<li>..to &quot;server_name <your-domain-name> www.<your-domain-name>;&quot;
+Use the latter.</li>
+</ul>
+<ol start="5">
+<li>Right below the &quot;server_name&quot; parameter is the 'location' block-parameter. Edit its value like so:</li>
+</ol>
+<pre><code>location / {
+  proxy_pass http://localhost:&lt;your-rust-web-api-port&gt;;
+  proxy_http_version 1.1;
+  proxy_set_header Upgrade $http_upgrade;
+  proxy_set_header Host $host;
+  proxy_set_header Connection 'upgrade';
+  proxy_cache_bypass $http_upgrade;
+}
+</code></pre>
+<p>Now save the changes by pressing 'Ctrl'+'o', and then exit out of the nano editor by pressing 'Ctrl'+'x'</p>
+<ol start="6">
+<li>
+<p>Use command <code>$ sudo nginx -t</code> to check for the correctness of the nginx configurations you just made.</p>
+</li>
+<li>
+<p>Restart Nginx. Use the command below to do so:</p>
+<pre><code>sudo systemctl restart nginx
+</code></pre>
+</li>
+</ol>
+<hr />
+<ol start="8">
+<li>
+<p>Activate and enable Ubuntu's firewall (ufw). Enter this command to enable ufw</p>
+<pre><code class="language-sh">sudo ufw enable
+</code></pre>
+<p>Then type 'y' and press enter to confirm &quot;yes&quot; choice</p>
+</li>
+<li>
+<p>Set the firewall to allow only specified access-points. Run the following commands one at a time to do so:</p>
+<pre><code>ufw allow sh
+</code></pre>
+<pre><code>ufw allow http
+</code></pre>
+<pre><code>ufw allow https
+</code></pre>
+<p>The above commands would make ufw disallow any other access means such, as access your web-api using ports</p>
+</li>
+<li>
+<p>Install an SSL/TLS Certficate Bot (Certbot). First make sure that you have 'snapd' installed on your machine using command <code>$ sudo apt install snapd</code>. Then run command:</p>
+</li>
+</ol>
+<pre><code>sudo snap install --classic certbot
+</code></pre>
+<ol start="11">
+<li>Run command to allow certbot to execute inside your Akamai instance</li>
+</ol>
+<pre><code>sudo snap install --classic certbot
+</code></pre>
+<p>The above command makes certbot's executable available to your Akamai instance's executables registry.</p>
+<ol start="12">
+<li>Connect Nginx to your certbot. Set up a certbot configuration for Nginx.</li>
+</ol>
+<ul>
+<li>Run <code>$ sudo certbot --nginx</code>, then press 'Enter'</li>
+<li>Enter your email (dev-email)</li>
+<li>Type and enter 'Y' to agree to terms &amp; conditions</li>
+<li>Optionally enter 'Y' to opt-in for email newsletter/marketing campaigns</li>
+<li>Press 'Enter' key to allow &quot;www&quot; prefix and non &quot;www&quot; prefix.</li>
+</ul>
+<div style="break-before: page; page-break-before: always;"></div><p>AUTOMATING CODE DEPLOYMENTS TO PRODUCTION ON AKAMAI</p>
+<ol>
+<li>
+<p>This guide would run your app's code as Docker containers in production mode, therefore, make sure to have a decent 'Dockerfile; and 'docker-compose.yml' file for your app's code in order to run your app as Docker containers. If you followed the axum template / axum-leptos template / axum-yew template creation steps, then you've already fulfilled this requirement.</p>
+</li>
+<li>
+<p>Optionally create a DockerHub account to host your application docker images inside DockerHub. This guide does not utilize DockerHub.</p>
+</li>
+</ol>
+<ul>
+<li>In case you do decide to utilize DockerHub, you can get a GitHub Actions workflow to publish a new docker image to DockerHub each time you push new code changes to GitHub.</li>
+<li>You can get the GitHub workflow file doing this here: https://docs.github.com/en/actions/publishing-packages/publishing-docker-images</li>
+<li>Make neccessary changes like setting a new docker image name with your DockerHub account. You can find this on line 31 or so ('with.images: <specify-your-dockerhub-account-repo-name>/<specify-your-docker-image-name>').</li>
+<li>Configure your GitHub account to contain your DockerHub account username and password as GitHub secrets. Ideally name the secrets as 'DOCKER_USERNAME' and 'DOCKER_PASSWORD'.</li>
+</ul>
+<p>Preferably start here:</p>
+<ol start="3">
+<li>Log-in to your Akamai instance and create a new script to stop currently running container -&gt; create new docker images - and run them as containers.</li>
+</ol>
+<ul>
+<li>First cd into your project's workspace, which in this case is '~/{{your-custom-workspace-name}}' (<strong>confirm this</strong>), then create a new '.sh' file named 'docker-maintenance.sh' inside it by running command <code>nano docker-maintenance.sh</code> This file should be created right inside the code repo directory for your project inside your Akamai instance.</li>
+<li>Next up, edit the opened script with the following contents:
+<pre><code class="language-sh"># Remove the currently running image
+sudo docker-compose down
+# Note: In case you used `docker run ...` command to manually spin up your previous docker container, then use `docker stop &lt;container-name&gt;` instead of 'docker-compose down'.
+# Remove the current Docker image inside your system
+sudo docker rmi &lt;your-app-docker-image&gt;
+# Optionally remove the existing volume
+sudo docker rm volume &lt;your-app-docker-db-data&gt;
+# ? Maybe pull code changes too from GitHub. !todo(later)
+# Build new Docker image
+sudo docker build -t &lt;your-app-docker-image&gt;:&lt;tag-number-goes-here-e.g-1.0&gt;
+# Note: In case you make use of a remote docker repo, first pull the docker image from dockerhub using command `docker pull &lt;the-docker-hub-repo-name&gt;/&lt;the-docker-hub-image-name&gt;`
+# ...then run a new docker container out of it using command `docker-compose up -d` OR `docker run -t -d -p 80:8070 --name &lt;the-docker-hub-repo-name&gt;:&lt;the-tag-name&gt;` if for some reason are not using a 'docker-compose.yml' file.
+sudo docker-compose up -d
+</code></pre>
+</li>
+<li>Save the shell script using command 'Ctrl' + 'O', and then exit out of the nano editor using command 'Ctrl' + 'X'.</li>
+</ul>
+<ol start="4">
+<li>
+<p>Permit the shell-script 'workspace-docker-maintenance.sh' to be executed on your machine using command:</p>
+<pre><code>sudo chmod +x workspace-docker-maintenance.sh
+</code></pre>
+</li>
+<li>
+<p>Test-run the script inside your Akamai instance using command;</p>
+</li>
+</ol>
+<pre><code>bash workspace-docker-maintenance.sh
+</code></pre>
+<p><small>The above script's execution essentially stops your Docker containers, and deletes the image and volumes associated with it.</small></p>
+<ol start="6">
+<li>
+<p>Still inside your Akamai instance, make sure to rerun <code>$ docker-compose up -d</code> from inside the root level of the directory containing your app's code bring your code live once again.</p>
+</li>
+<li>
+<p>Create a new Git branch name 'production' directly from your GitHub remote repo. You don't need anything (like a 'README.md') included with it.</p>
+</li>
+<li>
+<p>Go back to your Akamai instance; inside the root-level of your application's code (workspace directory), apply Git commands - <code>$ git pull</code>, <code>$ git checkout production</code>.</p>
+</li>
+<li>
+<p>Open a terminal your local dev machine, navigate to the root-level directory of your app's codebase, and type Git commands - <code>$ git pull</code>, <code>$ git checkout production</code>.</p>
+</li>
+<li>
+<p>Now you need to create a GitHub Actions workflow for Git branch 'production' to allow a remote SSH connection to your Akamai instance, and run a script to update your server running on your Akamai instance anytime that you make code changes made to Git branch 'production' from inside your local dev machine:</p>
+</li>
+</ol>
+<ul>
+<li>Note, we'll use the 'ssh-action' from Github repo - https://github.com/appleboy/ssh-action</li>
+<li>Rename the existing '.github/workflows/rust.yml' file inside your local dev machine to 'ci-cd.yml', and then change its content to;</li>
+</ul>
+<pre><code class="language-yaml"># Inside 'ci-cd.yml'
+name: Check code &amp; Publish code-changes to Akamai production via remote SSH
+
+on:
+  push:
+    branches: ['production']
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: cargo build --verbose
+      - name: Run tests
+        run: cargo test --verbose
+
+  ssh_into_akamai_production_instance:
+    name: Building code inside Akamai
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: executing remote ssh commands to Akamai to run Docker-maintainance
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: bash workspace-docker-maintenance.sh
+</code></pre>
+<ol start="10">
+<li>
+<p>Create the necessary GitHub secrets credentials used in the new 'ci-cd.yml' GitHub Actions workflow- 'HOST' (will be your Akamai instance public IPV4 address or connected domain name), 'USERNAME' (will be the local user you created on your Akamai instance), 'PASSWORD' (your Akamai instance local user' password). Provide the value of '22' as your 'PORT', which is the default used in servers.</p>
+</li>
+<li>
+<p>If you haven't already done so, add your '.git' and 'target' to '.dockerignore'. Apply this change to branch 'production'.</p>
+</li>
+<li>
+<p>Make sure to commit the changes you made on your branch 'production' on your local dev machine, and then push the changes to your remote repo. You'll encounter the error: Job &quot;Building code inside Akamai&quot; fail with the following repeated error log - &quot;err: sudo: a terminal is required to read the password; either use the -S option to read from standard input or configure an askpass helper&quot;. Fix this error in the next step.</p>
+</li>
+<li>
+<p>Edit and change the first line of the 'workspace-docker-maintenance.sh' bash script from <code>sudo docker-compose down</code> to <code>echo '&lt;your-akamai-instance-user-password&gt;' | sudo -S docker-compose down</code>. Effecting this change would make your 'workspace-docker--maintenance.sh' file look similar to the following;</p>
+</li>
+</ol>
+<pre><code class="language-sh">
+  # Remove the currently running image
+  echo '&lt;your-akamai-instance-user-password&gt;' | sudo -S docker-compose down
+  # Note: In case you used `docker run ...` command to manually spin up your previous docker container, then use `docker stop &lt;container-name&gt;` instead of 'docker-compose down'.
+  # Remove the current Docker image inside your system
+  sudo docker rmi &lt;your-app-docker-image&gt;
+  # Optionally remove the existing volume
+  sudo docker rm volume &lt;your-app-docker-db-data&gt;
+  # Now let's pull code changes from GitHub
+  git pull
+  # Build new Docker image
+  sudo docker build -t &lt;your-app-docker-image&gt;:&lt;tag-number-goes-here-e.g-1.0&gt;
+  # Note: In case you make use of a remote docker repo, first pull the docker image from dockerhub using command `docker pull &lt;the-docker-hub-repo-name&gt;/&lt;the-docker-hub-image-name&gt;`
+  # ...then run a new docker container out of it using command `docker-compose up -d` OR `docker run -t -d -p 80:8070 --name &lt;the-docker-hub-repo-name&gt;:&lt;the-tag-name&gt;` if for some reason are not using a 'docker-compose.yml' file.
+  sudo docker-compose up -d
+</code></pre>
+<ol start="14">
+<li>You need to edit your previously created '~/.ssh/config' (SSH configuration file) to allow the script inside your Akamai instance to make an SSH connection to your remote repo without typing the passphrase associated with your SSH keys. If you don't make this change, then you would have to manually enter command to pull code changes inside Git branch 'production' from your remote repo, and then manaually enter the command to execute your `workspace-docker-maintenance.sh' script file to deploy the changes on your Akamai instance.</li>
+</ol>
+<pre><code>Host *
+  IgnoreUnknown Usekeychain,AddKeysToAgent
+  AddKeysToAgent yes
+  IdentityFile ~/.ssh/access_to_axum_workspace
+  UseKeychain yes
+</code></pre>
+<p>Congratulations. You now have a set-up that works for serving a website / web-app to production using Akamai Cloud. You can now merge code changes to local Git branch 'production' then the changes remote Git branch 'production', and have it automatically deployed live on your Akamai instance.</p>
+<p>Let's go back to our Rust application code, and add features we can run on 'production' simply by pushing the changes to Git branch 'production' on your remote repo.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+            </nav>
+
+        </div>
+
+        <!-- Livereload script (if served using the cli tool) -->
+        <script type="text/javascript">
+            const wsProtocol = location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsAddress = wsProtocol + "//" + location.host + "/" + "__livereload";
+            const socket = new WebSocket(wsAddress);
+            socket.onmessage = function (event) {
+                if (event.data === "reload") {
+                    socket.close();
+                    location.reload();
+                }
+            };
+
+            window.onbeforeunload = function() {
+                socket.close();
+            }
+        </script>
+        <script type="text/javascript">
+            window.playground_copyable = true;
+        </script>
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        <script type="text/javascript">
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+    </body>
+</html>
