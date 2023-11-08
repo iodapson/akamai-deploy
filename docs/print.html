@@ -594,7 +594,7 @@ Use the latter.</li>
 <li>Log-in to your Akamai instance and create a new script to stop currently running container -&gt; create new docker images - and run them as containers.</li>
 </ol>
 <ul>
-<li>First cd into your project's workspace, which in this case is '~/{{your-custom-workspace-name}}' (<strong>confirm this</strong>), then create a new '.sh' file named 'docker-maintenance.sh' inside it by running command <code>nano docker-maintenance.sh</code> This file should be created right inside the code repo directory for your project inside your Akamai instance.</li>
+<li>First cd into your project's workspace, which in this case is <code>~/{{your-custom-workspace-name}}</code>, then create a new '.sh' file named 'docker-maintenance.sh' inside it by running command <code>nano docker-maintenance.sh</code> This file should be created right inside the code repo directory for your project inside your Akamai instance.</li>
 <li>Next up, edit the opened script with the following contents:
 <pre><code class="language-sh"># Remove the currently running image
 sudo docker-compose down
